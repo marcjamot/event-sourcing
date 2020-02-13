@@ -10,11 +10,11 @@ The architecture in the image below shows micro services that has differing inte
 
 ![Architecture](docs/architecture.png)
 
-The core principle of this architecture is that services should not have strong connections to other services and should instead communicate using events. Benefits of an event sourcing system will not be described in this repository, please read and watch the resources provided at the bottom. With that said, event sourcing is not the golden solution for everything and we have some exceptions as well such as `TickAPI -> AuthAPI` for authentication, `AdminAPI -> Statistics` for business information and any relation to `UserAPI` which serves as a gateway to sensitive information. These service to service connections can still be event driven but will not be event sourced in the architecture for this project.
+The core principle of this architecture is that services should not have strong connections to other services and should instead communicate using events. Most services should mimic the `ScoreModel` if possible, or `Notifier` if they require sensitive user data but need to clearly specify usage and retention of said data. Benefits of an event sourcing system will not be described in this repository, please read and watch the resources provided at the bottom. With that said, event sourcing is not the golden solution for everything and we have some exceptions as well such as `TickAPI -> AuthAPI` for authentication, `AdminAPI -> Statistics` for business information and any relation to `UserAPI` which serves as a gateway to sensitive information. These service to service connections can still be event driven but will not be event sourced in the architecture for this project.
 
 ## Tick API
 
-Provides endpoints to tick birds with provided images as well as rate bird images. Interacts with `AuthAPI` to authenticate the user doing the request. Produces events when the user `tick` a bird, `rate` an image or asks for `GDPR` deletion.
+This is your regular entry point from the outside to the system. Provides endpoints to tick birds with provided images as well as rate bird images. Interacts with `AuthAPI` to authenticate the user doing the request. Produces events when the user `tick` a bird, `rate` an image or asks for `GDPR` deletion.
 
 ## Auth API
 
@@ -26,11 +26,11 @@ Handles all sensitive information as well as `GDPR` requests. Provides endpoints
 
 ## Score model
 
-Consumes `tick` events, scores them according to a secret formula (totally not visible in the source code) and produces `score` events.
+The type of service that has no connections to other services and does not handle sensitive user data, isolated and easy to maintain, update and replace. Consumes `tick` events, scores them according to a secret formula (totally not visible in the source code) and produces `score` events.
 
 ## Notifier
 
-Consumes `rate` events and sends a message to the user who ticked the bird that they have a new rating to check out. Produces `notification` events for statistical purposes. Connects to `UserAPI` to get the email address for the user.
+Almost the same as `ScoreModel` but also requires sensitive user data. Consumes `rate` events and sends a message to the user who ticked the bird that they have a new rating to check out. Produces `notification` events for statistical purposes. Connects to `UserAPI` to get the email address for the user.
 
 ## Statistics API
 
