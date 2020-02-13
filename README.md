@@ -38,7 +38,7 @@ Consumes all events and produces statistics for analysis purposes.
 
 ## Admin API
 
-Convenient tool for getting an overview of the business as well as managing users.
+Convenient tool for getting an overview of the business as well as managing users. Events can be added for changes performed through the `AdminAPI` to provide auditing log.
 
 ## Events
 
